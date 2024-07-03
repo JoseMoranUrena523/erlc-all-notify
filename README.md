@@ -1,5 +1,8 @@
 # ER:LC "all" Notify
 
+## Special thanks to those that are using my automation!
+[![image](https://github.com/JoseMoranUrena523/erlc-all-notify/assets/87477958/f49aaca3-7c64-4c78-afd4-963f3f1b128c)](https://discord.gg/frcp)
+
 ## What is this?
 This automation detects when a Roblox user joins your ER:LC private server with a username starting with "all". It then sends staff members a private message letting them know that a username starting with "all" has joined. (hasn't been tested in a private server yet so it can be buggy).
 
