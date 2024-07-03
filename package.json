@@ -1,0 +1,28 @@
+{
+  "name": "erlc-all-notify",
+  "version": "1.0.0",
+  "description": "It notifies staff members of people that join with usernames that start with \"all\" in your ER:LC/PRC private server.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoseMoranUrena523/erlc-all-notify.git"
+  },
+  "keywords": [
+    "erlc",
+    "roblox",
+    "prc",
+    "automation"
+  ],
+  "author": "Jose Moran Urena",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JoseMoranUrena523/erlc-all-notify/issues"
+  },
+  "homepage": "https://github.com/JoseMoranUrena523/erlc-all-notify#readme",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}
