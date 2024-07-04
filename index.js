@@ -1,4 +1,6 @@
 import fetch from 'node-fetch';
+import { QuickDB } from 'quick.db';
+const db = new QuickDB();
 
 const serverKey = 'exampleServerKey'; // Your server key, can be found in private server settings
 const baseURL = 'https://api.policeroleplay.community/v1/'; // Base URL, can be found at https://apidocs.policeroleplay.community/for-developers/api-reference
@@ -6,10 +8,12 @@ const interval = 6; // How often to check join logs (DO NOT CHANGE, RATE LIMIT)
 const joinMessage = 'A user with a username starting with "all" has joined: '; // Message to be sent to moderators/admins
 
 if (serverKey === 'exampleServerKey') {
-  return console.error("You've started the automation for the first time! Please set your server key in line 3 of index.js. You can also modify the interval, PRC's base URL, or the join message with lines 4-6.");
+  return console.error("You've started the automation for the first time! Please set your server key in line 3 of the script. You can also modify the interval, PRC's base URL, or the join message with lines 4-6.");
 }
 
 async function checkJoinLogs() {
+  await db.init();
+
   try {
     const response = await fetch(`${baseURL}server/joinlogs`, {
       headers: { 
@@ -27,6 +31,13 @@ async function checkJoinLogs() {
       const player = log.Player;
       if (/^all/i.test(player)) {
         const playerName = player.split(':')[0];
+        const playerId = player.split(':')[1];
+
+        const isNotified = await db.get(playerId);
+        if (isNotified) {
+          console.log(`Join message for player with ID ${playerId} has already been sent.`);
+          continue;
+        }
 
         try {
           const playersResponse = await fetch(`${baseURL}server/players`, {
@@ -54,6 +65,8 @@ async function checkJoinLogs() {
                   command: `:pm ${player.Name} ${joinMessage}${playerName}`
                 })
               });
+
+              await db.set(playerId, true);
             }
           }
         } catch (playersError) {
