@@ -4,7 +4,8 @@
   "description": "It notifies staff members of people that join with usernames that start with \"all\" in your ER:LC/PRC private server.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -23,7 +24,7 @@
   },
   "homepage": "https://github.com/JoseMoranUrena523/erlc-all-notify#readme",
   "dependencies": {
-    "node-fetch": "^3.3.2",
+    "node-fetch": "^2.6.7",
     "quick.db": "^9.1.7",
     "better-sqlite3": "^11.1.2"
   }
