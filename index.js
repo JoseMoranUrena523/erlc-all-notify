@@ -85,13 +85,15 @@ async function sendCommand(command) {
 async function notifyStaff(players) {
   try {
     const { players: staff, rateLimitReset: rateLimitReset1 } = await fetchPlayers();
-    const staffMembers = staff.filter(player => player.Permission.includes("Server Moderator") || player.Permission.includes("Server Administrator") || player.Permission.includes("Server Owner"));
+    const resetTime1 = (parseInt(rateLimitReset1, 10) * 1000) - Date.now() + 1000;
+    await new Promise(resolve => setTimeout(resolve, resetTime1));
 
+    const staffMembers = staff.filter(player => player.Permission.includes("Server Moderator") || player.Permission.includes("Server Administrator") || player.Permission.includes("Server Owner"));
     const playerNames = players.map(player => player.Player.split(':')[0]).join(', ');
     const message = players.length > 1 ? multipleJoinMessage : `${joinMessage}${playerNames}`;
 
     for (const staffMember of staffMembers) {
-      const { rateLimitReset: rateLimitReset2 } = await sendCommand(`:pm ${staffMember.Name} ${message}`);
+      const { rateLimitReset: rateLimitReset2 } = await sendCommand(`:pm ${staffMember.Player.split(':')[0]} ${message}`);
       const resetTime = (parseInt(rateLimitReset2, 10) * 1000) - Date.now() + 1000;
       await new Promise(resolve => setTimeout(resolve, resetTime));
     }
