@@ -17,7 +17,7 @@ As a former private server moderator myself, I was in a mod call where a user na
 ### Installation Steps
 1. `git clone https://github.com/JoseMoranUrena523/erlc-all-notify`
 2. `npm install pm2 -g`
-3. Edit lines 5-9 of **index.js**.
+3. Edit lines 5 and 7-9 of **index.js**.
 4. `npm install`
 5. `pm2 start index.js`
 
