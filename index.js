@@ -93,18 +93,32 @@ async function notifyStaff(players) {
     await new Promise(resolve => setTimeout(resolve, resetTime1));
 
     const staffMembers = staff.filter(player => player.Permission.includes("Server Moderator") || player.Permission.includes("Server Administrator") || player.Permission.includes("Server Owner"));
-    const playerNames = players.map(player => player.Player.split(':')[0]).join(', ');
-    const message = players.length > 1 ? multipleJoinMessage : `${joinMessage}${playerNames}`;
 
-    for (const staffMember of staffMembers) {
-      const { rateLimitReset: rateLimitReset2 } = await sendCommand(`:pm ${staffMember.Player.split(':')[0]} ${message}`);
-      const resetTime = (parseInt(rateLimitReset2, 10) * 1000) - Date.now() + 1000;
-      await new Promise(resolve => setTimeout(resolve, resetTime));
-    }
-
+    const newPlayers = [];
     for (const player of players) {
       const playerId = player.Player.split(':')[1];
-      await db.set(playerId, true);
+      const exists = await db.get(playerId);
+      if (!exists) {
+        newPlayers.push(player);
+      }
+    }
+
+    if (newPlayers.length > 0) {
+      const playerNames = newPlayers.map(player => player.Player.split(':')[0]).join(', ');
+      const message = newPlayers.length > 1 ? multipleJoinMessage : `${joinMessage}${playerNames}`;
+
+      for (const staffMember of staffMembers) {
+        const { rateLimitReset: rateLimitReset2 } = await sendCommand(`:pm ${staffMember.Player.split(':')[0]} ${message}`);
+        const resetTime = (parseInt(rateLimitReset2, 10) * 1000) - Date.now() + 1000;
+        await new Promise(resolve => setTimeout(resolve, resetTime));
+      }
+
+      for (const player of newPlayers) {
+        const playerId = player.Player.split(':')[1];
+        await db.set(playerId, true);
+      }
+    } else {
+      console.log("No new players to notify.");
     }
   } catch (playersError) {
     console.error(`Error notifying staff:`, playersError);
