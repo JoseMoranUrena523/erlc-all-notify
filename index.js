@@ -4,8 +4,8 @@ const db = new QuickDB();
 
 const serverKey = 'exampleServerKey'; // Your server key, can be found in private server settings
 const baseURL = 'https://api.policeroleplay.community/v1/'; // Base URL, can be found in https://apidocs.policeroleplay.community/for-developers/api-reference
-const joinMessage = 'A user with a username starting with "all" has joined: '; // Message to be sent to moderators/admins
-const multipleJoinMessage = 'Multiple users with usernames starting with "all" have joined.'; // Message when multiple users join
+const joinMessage = 'A user with a username starting with "all" or "others" have joined: '; // Message to be sent to moderators/admins
+const multipleJoinMessage = 'Multiple users with usernames starting with "all" or "others" have joined.'; // Message when multiple users join
 const cooldownTime = 60; // Cooldown for how often to notify staff members
 
 let lastNotificationTime = 0;
@@ -136,7 +136,7 @@ async function checkJoinLogs() {
 
     const playersToNotify = joinLogs.filter(log => {
       const playerName = log.Player.split(':')[0];
-      return /^all/i.test(playerName);
+      return /^(all|others)/i.test(playerName);
     });
 
     if (playersToNotify.length > 0) {
