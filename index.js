@@ -29,7 +29,7 @@ async function fetchJoinLogs() {
         const resetTime = (parseInt(rateLimitReset, 10) * 1000) - Date.now() + 1000;
         if (typeof ssdDelay === 'undefined' || resetTime > ssdDelay) {
           ssdDelay = resetTime;
-          console.warn("Update line 8, too frequent checking.");
+          console.warn("Update line 10, too frequent checking.");
         }
         console.error(`Private server is shut down (there are no players), retrying after rate limit reset in ${resetTime / 1000} seconds.`);
         await new Promise(resolve => setTimeout(resolve, resetTime));
