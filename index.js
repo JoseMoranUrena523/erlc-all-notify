@@ -7,6 +7,7 @@ const baseURL = 'https://api.policeroleplay.community/v1/'; // Base URL, can be 
 const joinMessage = 'A user with a username starting with "all" or "others" have joined: '; // Message to be sent to moderators/admins
 const multipleJoinMessage = 'Multiple users with usernames starting with "all" or "others" have joined.'; // Message when multiple users join
 const cooldownTime = 60; // Cooldown for how often to notify staff members
+let ssdDelay = 30; // Change the amount of seconds to check join logs during SSD (default 30, be careful of rate limit)
 
 let lastNotificationTime = 0;
 
@@ -23,19 +24,32 @@ async function fetchJoinLogs() {
     });
 
     if (response.status === 422) {
-      throw new Error("Private server is shut down (there are no players), unable to proceed with automation.");
+      const rateLimitReset = response.headers.get('X-RateLimit-Reset');
+      if (rateLimitReset) {
+        const resetTime = (parseInt(rateLimitReset, 10) * 1000) - Date.now() + 1000;
+        if (typeof ssdDelay === 'undefined' || resetTime > ssdDelay) {
+          ssdDelay = resetTime;
+          console.warn("Update line 8, too frequent checking.");
+        }
+        console.error(`Private server is shut down (there are no players), retrying after rate limit reset in ${resetTime / 1000} seconds.`);
+        await new Promise(resolve => setTimeout(resolve, resetTime));
+      } else {
+        console.error("Private server is shut down (there are no players), unable to proceed with automation. Retrying...");
+        await new Promise(resolve => setTimeout(resolve, 30 * 1000));
+      }
+      return fetchJoinLogs();
     }
 
     if (response.status === 403) {
-      throw new Error("Invalid server key.");
+      return console.error("Invalid server key.");
     }
 
     if (response.status === 500) {
-      throw new Error("There was a problem communicating with Roblox.");
+      return console.error("There was a problem communicating with Roblox.");
     }
     
     if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
+      return console.error(`Error: ${response.statusText}`);
     }
 
     const joinLogs = await response.json();
